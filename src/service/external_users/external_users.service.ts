@@ -40,6 +40,7 @@ export class ExternalUsersService {
         console.log(error);
       });
 
+    // I was out of time to see why the avatar is not being saved in the database
     if (typeof avatar === 'string') {
       const newAvatar = await new this.avatarModel({
         userId: userId,

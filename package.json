@@ -2,7 +2,7 @@
   "name": "nestjs-mongodb-crud",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Bruno Leria",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

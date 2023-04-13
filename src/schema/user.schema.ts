@@ -7,7 +7,5 @@ export class User {
   first_name: string;
   @Prop()
   last_name: string;
-  @Prop()
-  avatar: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);

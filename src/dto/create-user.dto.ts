@@ -12,7 +12,4 @@ export class CreateUserDto {
   @MaxLength(30)
   @IsNotEmpty()
   readonly last_name: string;
-  @IsString()
-  @IsNotEmpty()
-  readonly avatar: string;
 }

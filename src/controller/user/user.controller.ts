@@ -1,4 +1,12 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UserService } from 'src/service/user/user.service';
 
@@ -19,6 +27,19 @@ export class UserController {
         message: 'Error: User not created!',
         error: 'Bad Request',
       });
+    }
+  }
+
+  @Get('/:id')
+  async getUser(@Res() response, @Param('id') userId: string) {
+    try {
+      const existingUser = await this.userService.getUser(userId);
+      return response.status(HttpStatus.OK).json({
+        message: 'User found successfully',
+        existingUser,
+      });
+    } catch (err) {
+      return response.status(err.status).json(err.response);
     }
   }
 }

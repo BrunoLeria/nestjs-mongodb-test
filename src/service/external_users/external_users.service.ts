@@ -35,7 +35,7 @@ export class ExternalUsersService {
         .catch((error) => {
           console.log(error);
         });
-      const newAvatar = await new this.avatarModel({
+      const newAvatar = new this.avatarModel({
         userId: userId,
         file: avatar,
       });

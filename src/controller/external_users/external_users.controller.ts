@@ -39,12 +39,9 @@ export class ExternalUsersController {
   @Delete('/:id/avatar')
   async deleteUserAvatar(@Res() response, @Param('id') userId: string) {
     try {
-      const deletedAvatar = await this.externalUsersService.deleteUserAvatar(
-        userId,
-      );
+      await this.externalUsersService.deleteUserAvatar(userId);
       return response.status(HttpStatus.OK).json({
         message: 'Avatar deleted successfully',
-        deletedAvatar,
       });
     } catch (err) {
       return response.status(err.status).json(err.response);

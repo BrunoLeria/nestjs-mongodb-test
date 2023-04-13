@@ -18,7 +18,7 @@ export class ExternalUsersService {
     return (await response).data.data;
   }
 
-  async getUserAvatar(userId: string): Promise<IAvatar> {
+  async getUserAvatar(userId: string): Promise<string> {
     this.avatarModel.findOne({ userId: userId }).then((avatar) => {
       if (avatar) {
         return avatar;
@@ -39,11 +39,17 @@ export class ExternalUsersService {
       .catch((error) => {
         console.log(error);
       });
-    const newAvatar = await new this.avatarModel({
-      userId: userId,
-      file: avatar,
-    });
-    return newAvatar.save();
+
+    if (typeof avatar === 'string') {
+      const newAvatar = await new this.avatarModel({
+        userId: userId,
+        file: avatar,
+      });
+      await newAvatar.save();
+      return avatar;
+    }
+
+    return 'Avatar not found';
   }
 
   async deleteUserAvatar(userId: string): Promise<IAvatar> {

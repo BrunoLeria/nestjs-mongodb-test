@@ -10,14 +10,4 @@ export class UserService {
     const newUser = await new this.userModel(createUserDto);
     return newUser.save();
   }
-
-  async getUser(studentId: string): Promise<IUser> {
-    const response = await fetch(`https://reqres.in/api/users/${studentId}`);
-    const jsonData = await response.json();
-    const existingStudent = jsonData.data;
-    if (!existingStudent) {
-      throw new NotFoundException(`Student #${studentId} not found`);
-    }
-    return existingStudent;
-  }
 }

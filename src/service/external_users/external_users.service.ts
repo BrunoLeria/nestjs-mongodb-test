@@ -8,7 +8,7 @@ import { Model } from 'mongoose';
 export class ExternalUsersService {
   constructor(
     private readonly httpService: HttpService,
-    @InjectModel('User') private avatarModel: Model<IAvatar>,
+    @InjectModel('Avatar') private avatarModel: Model<IAvatar>,
   ) {}
 
   async getUser(userId: string): Promise<string> {
@@ -18,39 +18,30 @@ export class ExternalUsersService {
     return (await response).data.data;
   }
 
-  async getUserAvatar(userId: string): Promise<string> {
-    this.avatarModel.findOne({ userId: userId }).then((avatar) => {
-      if (avatar) {
-        return avatar;
-      }
-    });
-    const response = this.httpService.axiosRef.get(
-      `https://reqres.in/api/users/${userId}`,
-    );
-
-    const avatarURL = (await response).data.data.avatar;
-    const avatar = await this.httpService.axiosRef
-      .get(avatarURL, {
-        responseType: 'arraybuffer',
-      })
-      .then((response) =>
-        Buffer.from(response.data, 'binary').toString('base64'),
-      )
-      .catch((error) => {
-        console.log(error);
-      });
-
-    // I was out of time to see why the avatar is not being saved in the database
-    if (typeof avatar === 'string') {
+  async getUserAvatar(userId: string): Promise<IAvatar> {
+    const search = this.avatarModel.findOne({ userId: userId }).exec();
+    if ((await search) === null) {
+      const response = this.httpService.axiosRef.get(
+        `https://reqres.in/api/users/${userId}`,
+      );
+      const avatarURL = (await response).data.data.avatar;
+      const avatar = await this.httpService.axiosRef
+        .get(avatarURL, {
+          responseType: 'arraybuffer',
+        })
+        .then((response) =>
+          Buffer.from(response.data, 'binary').toString('base64'),
+        )
+        .catch((error) => {
+          console.log(error);
+        });
       const newAvatar = await new this.avatarModel({
         userId: userId,
         file: avatar,
       });
-      await newAvatar.save();
-      return avatar;
+      return newAvatar.save();
     }
-
-    return 'Avatar not found';
+    return search;
   }
 
   async deleteUserAvatar(userId: string): Promise<IAvatar> {

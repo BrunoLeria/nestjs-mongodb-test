@@ -29,7 +29,7 @@ export class ExternalUsersController {
     try {
       const avatar = await this.externalUsersService.getUserAvatar(userId);
       return response.status(HttpStatus.OK).json({
-        avatar: avatar,
+        avatar: avatar.file,
       });
     } catch (err) {
       return response.status(err.status).json(err.response);

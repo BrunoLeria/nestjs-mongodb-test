@@ -5,7 +5,7 @@ import { IAvatar } from 'src/external-api/interface/avatar.interface';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class ExternalUsersService {
+export class ExternalApiService {
   constructor(
     private readonly httpService: HttpService,
     @InjectModel('Avatar') private avatarModel: Model<IAvatar>,

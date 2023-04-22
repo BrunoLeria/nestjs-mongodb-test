@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExternalUsersController } from './externalApi.controller';
+import { ExternalApiController } from './external-api.controller';
 
-describe('ExternalUsersController', () => {
-  let controller: ExternalUsersController;
+describe('ExternalApiController', () => {
+  let controller: ExternalApiController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [ExternalUsersController],
+      controllers: [ExternalApiController],
     }).compile();
 
-    controller = module.get<ExternalUsersController>(ExternalUsersController);
+    controller = module.get<ExternalApiController>(ExternalApiController);
   });
 
   it('should be defined', () => {

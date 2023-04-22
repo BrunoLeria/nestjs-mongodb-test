@@ -6,16 +6,16 @@ import {
   Param,
   Res,
 } from '@nestjs/common';
-import { ExternalUsersService } from 'src/external-api/service/external-api.service';
+import { ExternalApiService } from '../service/external-api.service';
 
 @Controller('api/user')
-export class ExternalUsersController {
-  constructor(private readonly externalUsersService: ExternalUsersService) {}
+export class ExternalApiController {
+  constructor(private readonly ExternalApiService: ExternalApiService) {}
 
   @Get('/:id')
   async getUser(@Res() response, @Param('id') userId: string) {
     try {
-      const existingUser = await this.externalUsersService.getUser(userId);
+      const existingUser = await this.ExternalApiService.getUser(userId);
       return response.status(HttpStatus.OK).json({
         user: existingUser,
       });
@@ -27,7 +27,7 @@ export class ExternalUsersController {
   @Get('/:id/avatar')
   async getUserAvatar(@Res() response, @Param('id') userId: string) {
     try {
-      const avatar = await this.externalUsersService.getUserAvatar(userId);
+      const avatar = await this.ExternalApiService.getUserAvatar(userId);
       return response.status(HttpStatus.OK).json({
         avatar: avatar.file,
       });
@@ -39,7 +39,7 @@ export class ExternalUsersController {
   @Delete('/:id/avatar')
   async deleteUserAvatar(@Res() response, @Param('id') userId: string) {
     try {
-      await this.externalUsersService.deleteUserAvatar(userId);
+      await this.ExternalApiService.deleteUserAvatar(userId);
       return response.status(HttpStatus.OK).json({
         message: 'Avatar deleted successfully',
       });

@@ -1,14 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserSchema } from './schema/user.schema';
-import { UserService } from './service/user/user.service';
-import { UserController } from './controller/user/user.controller';
+import { UserSchema } from './user/schema/user.schema';
 import { HttpModule } from '@nestjs/axios';
-import { ExternalUsersService } from './service/external_users/external_users.service';
-import { ExternalUsersController } from './controller/external_users/external_users.controller';
-import { AvatarSchema } from './schema/avatar.schema';
+import { AvatarSchema } from './external-api/schema/avatar.schema';
+import { UserModule } from './user/user.module';
+import { ExternalApiModule } from './external-api/external-api.module';
 
 // eslint-disable-next-line prettier/prettier
 @Module({
@@ -21,8 +17,8 @@ import { AvatarSchema } from './schema/avatar.schema';
       { name: 'Avatar', schema: AvatarSchema },
     ]),
     HttpModule,
+    UserModule,
+    ExternalApiModule,
   ],
-  controllers: [AppController, UserController, ExternalUsersController],
-  providers: [AppService, UserService, ExternalUsersService],
 })
 export class AppModule {}

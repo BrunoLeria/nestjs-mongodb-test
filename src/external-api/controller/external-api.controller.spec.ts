@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExternalUsersController } from './external_users.controller';
+import { ExternalUsersController } from './externalApi.controller';
 
 describe('ExternalUsersController', () => {
   let controller: ExternalUsersController;

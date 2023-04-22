@@ -6,7 +6,7 @@ import {
   Param,
   Res,
 } from '@nestjs/common';
-import { ExternalUsersService } from 'src/service/external_users/external_users.service';
+import { ExternalUsersService } from 'src/external-api/service/external-api.service';
 
 @Controller('api/user')
 export class ExternalUsersController {

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExternalUsersService } from './external_users.service';
+import { ExternalUsersService } from './external-api.service';
 
 describe('ExternalUsersService', () => {
   let service: ExternalUsersService;

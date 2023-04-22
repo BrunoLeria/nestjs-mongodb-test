@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectModel } from '@nestjs/mongoose';
-import { IAvatar } from 'src/external-api/interface/avatar.interface';
+import { IAvatar } from '../interface/avatar.interface';
 import { Model } from 'mongoose';
 
 @Injectable()

@@ -12,7 +12,7 @@ export class UserService {
   ) {}
 
   async getUserById(id: string): Promise<User> {
-    return this.usersRepository.findOne({ id });
+    return this.usersRepository.findOne({ userId: id });
   }
 
   async getUsers(): Promise<User[]> {
@@ -24,7 +24,7 @@ export class UserService {
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    return this.usersRepository.findOneAndUpdate({ id }, updateUserDto);
+    return this.usersRepository.findOneAndUpdate({ userId: id }, updateUserDto);
   }
 
   async sendEmail(

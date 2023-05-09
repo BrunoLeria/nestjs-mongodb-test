@@ -1,18 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { MailerService } from '@nestjs-modules/mailer';
+import { ClientProxy } from '@nestjs/microservices';
 import { User } from './schema/user.schema';
-import { UsersRepository } from './user.repository';
+import { UserRepository } from './user.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { v4 } from 'uuid';
+import { lastValueFrom } from 'rxjs';
+import EmailService from 'src/email/email.service';
+import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly usersRepository: UsersRepository,
-    private mailerService: MailerService,
+    private readonly usersRepository: UserRepository,
+    private readonly rabbitEvent: ClientProxy,
+    private readonly emailService: EmailService,
+    private readonly httpService: HttpService,
   ) {}
 
   async getUserById(id: string): Promise<User> {
-    return this.usersRepository.findOne({ userId: id });
+    return await this.httpService.axiosRef.get(
+      `https://reqres.in/api/users/${id}`,
+    );
   }
 
   async getUsers(): Promise<User[]> {
@@ -20,23 +28,30 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return this.usersRepository.create(createUserDto);
+    const session = await this.usersRepository.startTransaction();
+    try {
+      const newUser = { userId: v4(), ...createUserDto };
+      const result = await this.usersRepository.create(newUser);
+      await lastValueFrom(this.rabbitEvent.emit('user_created', newUser));
+      await this.emailService.sendMail({
+        from: '${process.env.EMAIL_USER}',
+        to: newUser.email,
+        subject: 'Welcome to NestJS',
+        text: 'Welcome to NestJS',
+      });
+      await session.commitTransaction();
+      return result;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     return this.usersRepository.findOneAndUpdate({ userId: id }, updateUserDto);
   }
 
-  async sendEmail(
-    email: string,
-    subject: string,
-    message: string,
-  ): Promise<void> {
-    await this.mailerService.sendMail({
-      to: email,
-      from: 'brunovolpatol@hotmail.com',
-      subject: subject,
-      html: `<h3 style="color: red">${message}</h3>`,
-    });
+  async deleteUser(id: string): Promise<User> {
+    return this.usersRepository.findOneAndDelete({ userId: id });
   }
 }

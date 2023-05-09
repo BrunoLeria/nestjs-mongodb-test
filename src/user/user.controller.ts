@@ -13,19 +13,19 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schema/user.schema';
 import { AvatarService } from '../avatar/avatar.service';
 
-@Controller('api')
+@Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly avatarService: AvatarService,
   ) {}
 
-  @Post('/users')
+  @Post()
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.createUser(createUserDto);
   }
 
-  @Get('/users')
+  @Get()
   async getUsers(): Promise<User[]> {
     return await this.userService.getUsers();
   }

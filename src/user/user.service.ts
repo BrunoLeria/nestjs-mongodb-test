@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './schema/user.schema';
 import { UserRepository } from './user.repository';
@@ -6,13 +6,18 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 } from 'uuid';
 import { HttpService } from '@nestjs/axios';
 import EmailService from '../email/email.service';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { UserCreatedEvent } from '../events/user-created.event';
 @Injectable()
 export class UserService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly emailService: EmailService,
     private readonly httpService: HttpService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
+
+  private readonly logger = new Logger(UserService.name);
 
   async getUserById(id: string): Promise<User> {
     return await this.httpService.axiosRef.get(
@@ -29,12 +34,11 @@ export class UserService {
     try {
       const newUser = { userId: v4(), ...createUserDto };
       const result = await this.usersRepository.create(newUser);
-      await this.emailService.sendMail({
-        from: '${process.env.EMAIL_USER}',
-        to: newUser.email,
-        subject: 'Welcome to NestJS',
-        text: 'Welcome to NestJS',
-      });
+      this.eventEmitter.emit(
+        'user.created',
+        new UserCreatedEvent(newUser.userId, newUser.email),
+      );
+
       await session.commitTransaction();
       return result;
     } catch (err) {
@@ -49,5 +53,16 @@ export class UserService {
 
   async deleteUser(id: string): Promise<User> {
     return this.usersRepository.findOneAndDelete({ userId: id });
+  }
+
+  @OnEvent('user.created')
+  async handleUserCreatedEvent(event: UserCreatedEvent) {
+    this.logger.log(`User created: ${JSON.stringify(event)}`);
+    await this.emailService.sendMail({
+      from: '${process.env.EMAIL_USER}',
+      to: event.email,
+      subject: 'Welcome to NestJS',
+      text: 'Welcome to NestJS',
+    });
   }
 }

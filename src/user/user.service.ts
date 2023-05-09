@@ -1,18 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ClientProxy } from '@nestjs/microservices';
 import { User } from './schema/user.schema';
 import { UserRepository } from './user.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 } from 'uuid';
-import { lastValueFrom } from 'rxjs';
-import EmailService from 'src/email/email.service';
 import { HttpService } from '@nestjs/axios';
+import EmailService from '../email/email.service';
 @Injectable()
 export class UserService {
   constructor(
     private readonly usersRepository: UserRepository,
-    private readonly rabbitEvent: ClientProxy,
     private readonly emailService: EmailService,
     private readonly httpService: HttpService,
   ) {}
@@ -32,7 +29,6 @@ export class UserService {
     try {
       const newUser = { userId: v4(), ...createUserDto };
       const result = await this.usersRepository.create(newUser);
-      await lastValueFrom(this.rabbitEvent.emit('user_created', newUser));
       await this.emailService.sendMail({
         from: '${process.env.EMAIL_USER}',
         to: newUser.email,

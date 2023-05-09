@@ -7,6 +7,7 @@ import { EmailModule } from '../email/email.module';
 import { UserRepository } from './user.repository';
 import { HttpModule } from '@nestjs/axios';
 import { AvatarModule } from '../avatar/avatar.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AvatarModule } from '../avatar/avatar.module';
     EmailModule,
     HttpModule,
     AvatarModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],

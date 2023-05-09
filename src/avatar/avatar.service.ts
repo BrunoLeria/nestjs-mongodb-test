@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Avatar } from './schema/avatar.schema';
 import { AvatarsRepository } from './avatar.repository';
 import { CreateAvatarDto } from './dto/create-avatar.dto';

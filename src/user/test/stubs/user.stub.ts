@@ -1,4 +1,4 @@
-import { User } from 'src/user/schema/user.schema';
+import { User } from '../../schema/user.schema';
 import { Types } from 'mongoose';
 
 export const userStub = (): User => {

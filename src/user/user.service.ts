@@ -13,20 +13,17 @@ export class UserService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly emailService: EmailService,
-    private readonly httpService: HttpService,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
   private readonly logger = new Logger(UserService.name);
 
-  async getUserById(id: string): Promise<User> {
-    return await this.httpService.axiosRef.get(
-      `https://reqres.in/api/users/${id}`,
-    );
-  }
-
   async getUsers(): Promise<User[]> {
     return this.usersRepository.find({});
+  }
+
+  async getUserById(userId: string): Promise<User> {
+    return this.usersRepository.findOne({ userId: userId });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -48,21 +45,46 @@ export class UserService {
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    return this.usersRepository.findOneAndUpdate({ userId: id }, updateUserDto);
+    const session = await this.usersRepository.startTransaction();
+    try {
+      const result = await this.usersRepository.findOneAndUpdate(
+        { userId: id },
+        updateUserDto,
+      );
+      await session.commitTransaction();
+      return result;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   async deleteUser(id: string): Promise<User> {
-    return this.usersRepository.findOneAndDelete({ userId: id });
+    const session = await this.usersRepository.startTransaction();
+    try {
+      const result = await this.usersRepository.findOneAndDelete({
+        userId: id,
+      });
+      await session.commitTransaction();
+      return result;
+    } catch (err) {
+      await session.abortTransaction();
+      throw err;
+    }
   }
 
   @OnEvent('user.created')
   async handleUserCreatedEvent(event: UserCreatedEvent) {
     this.logger.log(`User created: ${JSON.stringify(event)}`);
-    await this.emailService.sendMail({
-      from: '${process.env.EMAIL_USER}',
-      to: event.email,
-      subject: 'Welcome to NestJS',
-      text: 'Welcome to NestJS',
-    });
+    try {
+      await this.emailService.sendEmail({
+        from: '${process.env.EMAIL_USER}',
+        to: event.email,
+        subject: 'Welcome to NestJS',
+        text: 'Welcome to NestJS',
+      });
+    } catch (error) {
+      this.logger.error(`Error sending email to ${event.email}`);
+    }
   }
 }

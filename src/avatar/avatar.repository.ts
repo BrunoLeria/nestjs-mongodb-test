@@ -5,8 +5,8 @@ import { Avatar } from './schema/avatar.schema';
 import { AbstractRepository } from '../database/abstract.repository';
 
 @Injectable()
-export class AvatarsRepository extends AbstractRepository<Avatar> {
-  protected readonly logger = new Logger(AvatarsRepository.name);
+export class AvatarRepository extends AbstractRepository<Avatar> {
+  protected readonly logger = new Logger(AvatarRepository.name);
 
   constructor(
     @InjectModel(Avatar.name) avatarModel: Model<Avatar>,

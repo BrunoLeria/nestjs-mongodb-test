@@ -1,6 +1,5 @@
 import { Controller, Delete, Get, Param } from '@nestjs/common';
 import { ExternalApiService } from './external_api.service';
-import { User } from 'src/user/schema/user.schema';
 import { Avatar } from 'src/avatar/schema/avatar.schema';
 
 @Controller('user')

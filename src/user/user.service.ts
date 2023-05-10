@@ -4,7 +4,6 @@ import { User } from './schema/user.schema';
 import { UserRepository } from './user.repository';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { v4 } from 'uuid';
-import { HttpService } from '@nestjs/axios';
 import EmailService from '../email/email.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { UserCreatedEvent } from '../events/user-created.event';

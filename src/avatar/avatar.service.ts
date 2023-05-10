@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { Avatar } from './schema/avatar.schema';
 import { AvatarRepository } from './avatar.repository';
 import { CreateAvatarDto } from './dto/create-avatar.dto';

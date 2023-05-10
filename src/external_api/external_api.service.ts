@@ -1,6 +1,5 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { User } from '../user/schema/user.schema';
 import { Avatar } from 'src/avatar/schema/avatar.schema';
 import { AvatarService } from '../avatar/avatar.service';
 import * as fs from 'fs';

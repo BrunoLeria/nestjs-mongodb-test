@@ -5,7 +5,7 @@ export abstract class MockModel<T> {
     this.constructorSpy(createAbstractData);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
   constructorSpy(_createAbstractData: T): void {}
 
   async findOne(): Promise<T> {

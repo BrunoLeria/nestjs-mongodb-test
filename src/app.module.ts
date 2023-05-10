@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
 import { UserModule } from './user/user.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { ConfigModule } from '@nestjs/config';
 import { EmailModule } from './email/email.module';
 import * as Joi from 'joi';
 import { DatabaseModule } from './database/database.module';
-
-// eslint-disable-next-line prettier/prettier
+import { ExternalApiModule } from './external_api/external_api.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,10 +16,10 @@ import { DatabaseModule } from './database/database.module';
       }),
     }),
     DatabaseModule,
-    HttpModule,
     UserModule,
     AvatarModule,
     EmailModule,
+    ExternalApiModule,
   ],
 })
 export class AppModule {}

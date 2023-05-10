@@ -1,45 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Avatar } from './schema/avatar.schema';
-import { AvatarsRepository } from './avatar.repository';
+import { AvatarRepository } from './avatar.repository';
 import { CreateAvatarDto } from './dto/create-avatar.dto';
 import { v4 } from 'uuid';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
 
 @Injectable()
 export class AvatarService {
-  constructor(
-    private readonly avatarRepository: AvatarsRepository,
-    private readonly httpService: HttpService,
-  ) {}
+  constructor(private readonly avatarRepository: AvatarRepository) {}
 
   async getAvatars(): Promise<Avatar[]> {
     return this.avatarRepository.find({});
   }
 
   async getAvatar(userId: string): Promise<Avatar> {
-    const search = this.avatarRepository.findOne({ userId: userId });
-    if ((await search) === null) {
-      const response = this.httpService.axiosRef.get(
-        `https://reqres.in/api/users/${userId}`,
-      );
-      const avatarURL = (await response).data.data.avatar;
-      const avatar = await this.httpService.axiosRef
-        .get(avatarURL, {
-          responseType: 'arraybuffer',
-        })
-        .then((response) =>
-          Buffer.from(response.data, 'binary').toString('base64'),
-        )
-        .catch((error) => {
-          console.log(error);
-        });
-      if (!avatar) {
-        throw new Error('Avatar not found');
-      }
-      return await this.createAvatar({ userId: userId, file: avatar });
-    }
-    return search;
+    return this.avatarRepository.findOne({ userId: userId });
   }
 
   async createAvatar(createAvatarDto: CreateAvatarDto): Promise<Avatar> {
